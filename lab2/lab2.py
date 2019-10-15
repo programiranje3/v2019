@@ -3,7 +3,12 @@
 # generates and prints a dictionary with entries in the
 # form x:x*x, where x is a number between 1 and n.
 
-
+def create_dictionary(n):
+    d = dict()
+    for x in range(1, n+1):
+        d[x] = x*x
+    for key, val in d.items():
+        print("{}:{}".format(key, val))
 
 
 
@@ -12,7 +17,22 @@
 # calculates the number of digits and the number of letters in this string.
 # The function returns the dictionary with the computed values.
 
+def string_stats(s):
+    
+    # Option 1:
+    # d = {"letters":0, "digits":0}
+    # for ch in s:
+    #     if ch.isalpha():
+    #         d['letters'] += 1
+    #     elif ch.isdigit():
+    #         d['digits'] += 1
+    # return d
 
+	# Option 2:
+    digits = [ch for ch in s if ch.isdigit()]
+    letters = [ch for ch in s if ch.isalpha()]
+    d = {"digits":len(digits), "letters":len(letters)}
+    return d
 
 
 
@@ -26,8 +46,20 @@
 # Hint: use function randint from random package to generate a number to
 # be guessed in the game
 
+from random import randint
 
-
+def guessing_game():
+    number = randint(1,9)
+    for trial in range(3):
+        guess = input(f"Please enter your guess for the number (this is your {trial+1} attempt)\n")
+        if not guess.isdigit():
+            print("Wrong input! Only numbers in the [1-9] range are allowed")
+            continue
+        if int(guess) == number:
+            print("Right guess! Congrats!")
+            return
+        msg = "Wrong! Try again" if trial < 2 else "Wrong! More luck next time"
+        print(msg)
 
 
 # Task 4:
@@ -37,7 +69,21 @@
 # and should be case insensitive.
 # The function returns the result of the comparison as a boolean value.
 
+def compare_reversed(s1, s2):
+    l1 = [ch.lower() for ch in s1 if ch.isalnum()]
+    l2 = [ch.lower() for ch in s2 if ch.isalnum()]
+    new_s1 = "".join(l1)
+    l2.reverse()
+    new_s2 = "".join(l2)
+    print(new_s1, new_s2)
+    return new_s1 == new_s2
 
+
+# Option 2
+# def compare_reversed(str1, str2):
+#     l1 = [ch.lower() for ch in str1 if ch.isalnum()]
+#     22 = [ch.lower() for ch in reversed(str2) if ch.isalnum()]
+#     return l1 == l2
 
 
 
@@ -91,16 +137,17 @@
 
 if __name__ == '__main__':
 
-    pass
 
-    # create_dict(6)
+    # create_dictionary(6)
+
+    # print(string_stats("Today is October 15, 2019"))
 
     # print(digiti_letter_counter("Today is October 14, 2018"))
 
-    # guess_number()
+    # guessing_game()
 
-    # print(compare_reversed("Cat?", "tac!!!"))
-    # print(compare_reversed("Hello there!", "hello world!!!"))
+    print(compare_reversed("Cat?", "tac!!!"))
+    print(compare_reversed("Hello there!", "hello world!!!"))
 
     # palindrom()
 
