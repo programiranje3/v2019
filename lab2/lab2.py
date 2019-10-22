@@ -11,12 +11,15 @@ def create_dictionary(n):
         print("{}:{}".format(key, val))
 
 
+
 # Task 2:
 # Write a function that receives a string as its input parameter and
 # calculates the number of digits and the number of letters in this string.
 # The function returns the dictionary with the computed values.
 
 def string_stats(s):
+    
+    # Option 1:
     # d = {"letters":0, "digits":0}
     # for ch in s:
     #     if ch.isalpha():
@@ -25,11 +28,11 @@ def string_stats(s):
     #         d['digits'] += 1
     # return d
 
+	# Option 2:
     digits = [ch for ch in s if ch.isdigit()]
     letters = [ch for ch in s if ch.isalpha()]
     d = {"digits":len(digits), "letters":len(letters)}
     return d
-
 
 
 
@@ -66,8 +69,6 @@ def guessing_game():
 # and should be case insensitive.
 # The function returns the result of the comparison as a boolean value.
 
-
-
 def compare_reversed(s1, s2):
     l1 = [ch.lower() for ch in s1 if ch.isalnum()]
     l2 = [ch.lower() for ch in s2 if ch.isalnum()]
@@ -77,6 +78,12 @@ def compare_reversed(s1, s2):
     print(new_s1, new_s2)
     return new_s1 == new_s2
 
+
+# Option 2
+# def compare_reversed(str1, str2):
+#     l1 = [ch.lower() for ch in str1 if ch.isalnum()]
+#     22 = [ch.lower() for ch in reversed(str2) if ch.isalnum()]
+#     return l1 == l2
 
 
 
