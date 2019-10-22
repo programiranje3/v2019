@@ -84,6 +84,7 @@
 
 if __name__ == '__main__':
 
+    pass
 
     # token_frequencies("New to Python or choosing between Python 2 and Python 3? Read Python 2 or Python 3.")
 
@@ -91,10 +92,10 @@ if __name__ == '__main__':
     
     # collecte_team_data()
 
-    team = [{'name': 'Bob', 'age': 18, 'score': 50.0},
-            {'name': 'Tim', 'age': 17, 'score': 84.0},
-            {'name': 'Jim', 'age': 19, 'score': 94.0}]
-    team_stats(team)
+    # team = [{'name': 'Bob', 'age': 18, 'score': 50.0},
+    #         {'name': 'Tim', 'age': 17, 'score': 84.0},
+    #         {'name': 'Jim', 'age': 19, 'score': 94.0}]
+    # team_stats(team)
 
     # dishes = ["pizza", "sauerkraut", "paella", "hamburger"]
     # countries = ["Italy", "Germany", "Spain", "USA"]
