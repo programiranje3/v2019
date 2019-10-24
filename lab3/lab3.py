@@ -9,7 +9,6 @@
 # in the decreasing order of the tokens' frequencies.
 # (hint: use itemgetter() f. from the operator module)
 
-<<<<<<< HEAD
 from collections import defaultdict
 from operator import itemgetter
 
@@ -44,8 +43,6 @@ def token_frequencies_v2(txt):
     for key, val in sorted(d.items(), key=lambda item: item[1], reverse=True):
         print(f"{key}: {val}")
 
-=======
->>>>>>> origin/master
 
 
 # Task 2
@@ -60,7 +57,6 @@ def token_frequencies_v2(txt):
 # Passwords that match the criteria should be printed in one row
 # separated by a comma.
 
-<<<<<<< HEAD
 import string
 
 def check_passwords(passwords):
@@ -95,19 +91,13 @@ def check_passwords_v2(passwords):
             verified.append(p)
     print(", ".join(verified))
 
-=======
->>>>>>> origin/master
 
 
 
 # Task 3
 # Write a function that prompts the user for name, age, and competition score (0-100) of members
 # of a sports team. All data items for one member should be entered in a single line, separated
-<<<<<<< HEAD
 # by a comma (e.g. Bob, 19, 55). The entry stops when the user enters 'done'.
-=======
-# by a comma (e.g. Bob, 19, 1.78, 75, 55). The entry stops when the user enters 'done'.
->>>>>>> origin/master
 # The function stores the data for each team member as a dictionary, such as
 # {name:Bob, age:19, score:55}
 # where name is string, age is integer, and score is a real value.
@@ -115,7 +105,6 @@ def check_passwords_v2(passwords):
 # The function prints this list sorted by the members' scores and also return the list as its
 # return value.
 
-<<<<<<< HEAD
 def collecte_team_data():
     print('''
             Please enter the following data for each team member: name, age, score
@@ -132,9 +121,6 @@ def collecte_team_data():
     for member in sorted(members_data, key=itemgetter('score'), reverse=True):
         name, age, score = member.values()
         print(f"{name}, {age}, {score}")
-=======
-
->>>>>>> origin/master
 
 
 
@@ -160,7 +146,6 @@ def collecte_team_data():
 # are the corresponding dishes.
 
 
-<<<<<<< HEAD
 def lists_to_dict(l1, l2):
     if len(l1) != len(l2):
         print("Lists of unequal size - cannot proceed!")
@@ -168,9 +153,6 @@ def lists_to_dict(l1, l2):
     d = dict(zip(l1, l2))
     for key, val in sorted(d.items(), key=lambda item: item[0].lower()):
         print(f"{key}: {val}")
-=======
-
->>>>>>> origin/master
 
 
 # Task 6
@@ -195,11 +177,7 @@ if __name__ == '__main__':
 
     # token_frequencies("New to Python or choosing between Python 2 and Python 3? Read Python 2 or Python 3.")
 
-<<<<<<< HEAD
     # check_passwords_v2("ABd1234@1, a F1#, 2w3E*T@, 2We3345")
-=======
-    # check_passwords("ABd1234@1, a F1#, 2w3E*, 2We3345")
->>>>>>> origin/master
     
     # collecte_team_data()
 
@@ -208,15 +186,9 @@ if __name__ == '__main__':
     #         {'name': 'Jim', 'age': 19, 'score': 94.0}]
     # team_stats(team)
 
-<<<<<<< HEAD
     dishes = ["pizza", "sauerkraut", "paella", "hamburger"]
     countries = ["Italy", "Germany", "Spain", "USA"]
     lists_to_dict(countries, dishes)
-=======
-    # dishes = ["pizza", "sauerkraut", "paella", "hamburger"]
-    # countries = ["Italy", "Germany", "Spain", "USA"]
-    # lists_to_dict(countries, dishes)
->>>>>>> origin/master
 
     # l = [('V', 1), ('VI', 1), ('V', 2), ('VI', 2), ('VI', 3), ('VII', 1)]
     # classroom_stats(l)
