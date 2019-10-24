@@ -45,6 +45,7 @@ def token_frequencies_v2(txt):
 
 
 
+
 # Task 2
 # Write a function that accepts a sequence of comma separated passwords
 # and checks their validity using the following criteria:
