@@ -93,7 +93,24 @@ def compare_reversed(s1, s2):
 # Consider only letters of the input text, regardless of the case
 # (i.e. comparison should be case insensitive)
 
+# Option 1:
+# def palindrom():
+#     txt = input("Please enter a word or a sentence to check if it is a palindrome\n")
+#     cleaned_txt = list()
+#     for ch in txt:
+#         if ch.isalpha(): cleaned_txt.append(ch.lower())
+#     reversed_txt = list(reversed(cleaned_txt))
+#     msg = "Palindrome!" if cleaned_txt == reversed_txt else "NOT a palindrome!"
+#     print(msg)
 
+
+# Option 2
+def palindrom():
+    txt = input("Please enter a word or a sentence to check if it is a palindrome\n")
+    cleaned_txt = [ch.lower() for ch in txt if ch.isalpha()]
+    reversed_txt = list(reversed(cleaned_txt))
+    result = "PALINDROME" if cleaned_txt == reversed_txt else "NOT a PALINDROME"
+    print(f"The text you've entered is {result}")
 
 
 
@@ -104,7 +121,23 @@ def compare_reversed(s1, s2):
 #
 # Hint: use ascii_lowercase from the string module to get all letters
 
+from string import ascii_lowercase
 
+# Option 1:
+# def pangram(s):
+#     for ch in ascii_lowercase:
+#         if ch not in s.lower(): return False
+#     return True
+#
+# Option 2:
+# def pangram(s):
+#     letters = [ch.lower() for ch in s if ch.isalpha()]
+#     diff = set(ascii_lowercase) - set(letters)
+#     return  len(diff) == 0
+#
+# Option 3:
+def pangram(s):
+    return all([l in s.lower() for l in ascii_lowercase])
 
 
 
@@ -113,8 +146,16 @@ def compare_reversed(s1, s2):
 # where each digit of a number is even. The numbers that match this criterion
 # should be printed in a comma-separated sequence.
 
+def all_even_digits():
+    result = list()
+    for num in range(100, 401):
+       # Option 1:
+       # are_even = [int(d) % 2 == 0 for d in str(num)]
+       # Option 2:
+       are_even = [d in '02468' for d in str(num)]
+       if all(are_even): result.append(num)
 
-
+    print(", ".join([str(number) for number in result]))
 
 
 
@@ -131,6 +172,15 @@ def compare_reversed(s1, s2):
 # result: ['ta', 'tab', 'tabl', 'table', 'ab', 'abl', 'able', 'bl', 'ble', 'le']
 
 
+def string_slices(s):
+    if (len(s) < 3): return [s]
+
+    result = []
+    for i in range(len(s)-1):
+        for j in range(i+1, len(s)):
+            result.append(s[i:(j+1)])
+
+    return result
 
 
 
@@ -146,8 +196,8 @@ if __name__ == '__main__':
 
     # guessing_game()
 
-    print(compare_reversed("Cat?", "tac!!!"))
-    print(compare_reversed("Hello there!", "hello world!!!"))
+    # print(compare_reversed("Cat?", "tac!!!"))
+    # print(compare_reversed("Hello there!", "hello world!!!"))
 
     # palindrom()
 
@@ -156,5 +206,5 @@ if __name__ == '__main__':
 
     # all_even_digits()
 
-    # print(string_slices('are'))
-    # print(string_slices('table'))
+    print(string_slices('are'))
+    print(string_slices('table'))

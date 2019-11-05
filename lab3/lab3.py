@@ -106,7 +106,7 @@ def check_passwords_v2(passwords):
 # The function prints this list sorted by the members' scores and also return the list as its
 # return value.
 
-def collecte_team_data():
+def collect_team_data():
     print('''
             Please enter the following data for each team member: name, age, score
             Enter 'done' to terminate data entry. 
@@ -133,8 +133,27 @@ def collecte_team_data():
 # - name of the player with the highest score among those under 21 years of age
 #
 # Hint: the 'statistics' module provides functions for the required computations
+#
+# Note: the quantiles() function was introduced in the statistics module in Python
+# version 3.8; if you are working with an earlier version of Python, instead of
+# the interquartile range, compute variance instead
 
+import statistics as stats
 
+def team_stats(team_data):
+    ages = [member['age'] for member in team_data]
+    scores = [member['score'] for member in team_data]
+    q1, q2, q3 = stats.quantiles(scores)
+
+    print(f"Average age: {stats.mean(ages):.2f}")
+    print(f"Average score: {stats.mean(scores):.2f}")
+    print(f"Interquartile range for scores: {q3-q1:.2f}")
+
+    max_score = max(scores)
+    for member_data in team_data:
+        if member_data['score'] == max_score:
+            print(f"Max score of {max_score} has {member_data['name']}")
+            break
 
 
 
@@ -168,29 +187,47 @@ def lists_to_dict(l1, l2):
 # After testing the function, try writing it using the Counter class from
 # the collections module.
 
+def classroom_stats(class_counts):
+    d = defaultdict(int)
+    for cl, freq in class_counts:
+        d[cl] += freq
+    for cl, freq in sorted(d.items(), key=itemgetter(1), reverse=True):
+        print(f"{cl}: {freq}")
 
+
+def classroom_stats_v2(class_counts):
+    from collections import Counter
+
+    all_classes = list()
+    for cl, freq in class_counts:
+        all_classes.extend([cl]*freq)
+    # print(all_classes)
+
+    cls_counter = Counter(all_classes)
+    for cls, freq in sorted(cls_counter.items(), key=itemgetter(1), reverse=True):
+        print(f"{cls}: {freq}")
 
 
 
 if __name__ == '__main__':
 
-    pass
-
     # token_frequencies("New to Python or choosing between Python 2 and Python 3? Read Python 2 or Python 3.")
 
     # check_passwords_v2("ABd1234@1, a F1#, 2w3E*T@, 2We3345")
     
-    # collecte_team_data()
+    # collect_team_data()
 
     # team = [{'name': 'Bob', 'age': 18, 'score': 50.0},
     #         {'name': 'Tim', 'age': 17, 'score': 84.0},
     #         {'name': 'Jim', 'age': 19, 'score': 94.0}]
     # team_stats(team)
 
-    dishes = ["pizza", "sauerkraut", "paella", "hamburger"]
-    countries = ["Italy", "Germany", "Spain", "USA"]
-    lists_to_dict(countries, dishes)
+    # dishes = ["pizza", "sauerkraut", "paella", "hamburger"]
+    # countries = ["Italy", "Germany", "Spain", "USA"]
+    # lists_to_dict(countries, dishes)
 
-    # l = [('V', 1), ('VI', 1), ('V', 2), ('VI', 2), ('VI', 3), ('VII', 1)]
-    # classroom_stats(l)
+    l = [('V', 1), ('VI', 1), ('V', 2), ('VI', 2), ('VI', 3), ('VII', 1)]
+    classroom_stats(l)
+    print()
+    classroom_stats_v2(l)
     
