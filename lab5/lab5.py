@@ -80,7 +80,59 @@ class Flight:
         self.departure = departure
         self.passengers = list()
 
+        self.current_passenger = 0
 
+    @property
+    def departure(self):
+        return self.__departure if self.__departure else "unknown"
+
+    @departure.setter
+    def departure(self, depart_value):
+        if isinstance(depart_value, datetime) and depart_value > datetime.now():
+            self.__departure = depart_value
+        elif isinstance(depart_value, str):
+            departure_parsed = datetime.strptime(depart_value, Flight.departure_format)
+            if departure_parsed > datetime.now():
+                self.__departure = departure_parsed
+            else:
+                self.__departure = None
+        else:
+            print("ERROR - improper value for flight departure")
+            self.__departure = None
+
+    def add_passenger(self, passenger):
+        if isinstance(passenger, Passenger) and (not passenger in self.passengers):
+            self.passengers.append(passenger)
+        else:
+            print("ERROR - passenger could not be added!")
+
+    def __str__(self):
+        flight_str = f"Flight {self.flight_num}, scheduled for departure: {self.format_departure(self.departure)}"
+        if len(self.passengers) > 0:
+            flight_str += "\nPassengers:\n" + "\n".join([str(passenger) for passenger in self.passengers])
+        else:
+            flight_str += "\nNo passengers yet"
+        return flight_str
+
+
+    @staticmethod
+    def format_departure(departure_dt):
+        if departure_dt != 'unknown':
+            return  datetime.strftime(departure_dt, Flight.departure_format)
+        return departure_dt
+
+
+    def __iter__(self):
+        return self
+
+
+    def __next__(self):
+        if self.current_passenger < len(self.passengers):
+            next_passenger = self.passengers[self.current_passenger]
+            self.current_passenger += 1
+            return next_passenger
+        else:
+            raise StopIteration
 
 
 if __name__ == '__main__':
@@ -89,9 +141,24 @@ if __name__ == '__main__':
     jane = Passenger("Jane Smith", "123489", True)
     bob = Passenger("Bob Smith", 987654, False)
 
-    print(john)
-    print(jane)
-    print(bob)
+    # print(john)
+    # print(jane)
+    # print(bob)
+    #
+    # print(f"john == jane: {john == jane}")
+    # print(f"john == bob: {john == bob}")
 
-    print(f"john == jane: {john == jane}")
-    print(f"john == bob: {john == bob}")
+    # "%Y-%m-%d %H:%M"
+    lh14567 = Flight('lh14567', '2019-11-11 12:45')
+    lh5678 = Flight('lh5678', '2019-11-04 13:00')
+
+    lh14567.add_passenger(john)
+    lh14567.add_passenger(jane)
+    lh14567.add_passenger(bob)
+
+    # print(lh14567)
+    # print()
+    # print(lh5678)
+
+    for p in lh14567:
+        print(str(p))
