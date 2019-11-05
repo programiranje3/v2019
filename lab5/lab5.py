@@ -14,7 +14,36 @@
 #   that is passed to the method as its input parameter (__eq__()); two passengers are
 #   considered the same if they have the same passport number
 
+class Passenger:
 
+    def __init__(self, name, passport, is_business):
+        self.name = name
+        self.passport = passport
+        self.is_business = is_business
+
+    @property
+    def passport(self):
+        return self.__passport if self.__passport else "unknown"
+
+    @passport.setter
+    def passport(self, pass_value):
+        if isinstance(pass_value, str) and len(pass_value) == 6 and all([ch.isdigit() for ch in pass_value]):
+            self.__passport = pass_value
+        elif isinstance(pass_value, int) and (100000 <= pass_value <= 999999):
+            self.__passport = str(pass_value)
+        else:
+            print("ERROR - wrong value for passport!")
+            self.__passport = None
+
+
+    def __str__(self):
+        passenger_str = f"{self.name}, with passport number: {self.passport}"
+        passenger_str += ", bussiness class." if self.is_business else ", economy class."
+        return passenger_str
+
+
+    def __eq__(self, other):
+        return (type(other) == Passenger) and (self.passport == other.passport)
 
 
 
@@ -40,8 +69,29 @@
 # - methods for turning the given Flight object into an iterator (__iter__(), __next__())
 #   over the flight passengers (ie. elements of the passengers list)
 
+from datetime import datetime
+
+class Flight:
+
+    departure_format = "%Y-%m-%d %H:%M"
+
+    def __init__(self, flight_num, departure):
+        self.flight_num = flight_num
+        self.departure = departure
+        self.passengers = list()
+
+
 
 
 if __name__ == '__main__':
 
-    pass
+    john = Passenger("John Smith", "123456", True)
+    jane = Passenger("Jane Smith", "123489", True)
+    bob = Passenger("Bob Smith", 987654, False)
+
+    print(john)
+    print(jane)
+    print(bob)
+
+    print(f"john == jane: {john == jane}")
+    print(f"john == bob: {john == bob}")
