@@ -16,7 +16,11 @@
 #   of greatest mathematicians it gave
 
 import json
-
+import requests
+from contextlib import closing
+from sys import stderr
+from bs4 import BeautifulSoup
+from collections import defaultdict
 
 def get_content_from_url(url):
     '''
@@ -24,8 +28,16 @@ def get_content_from_url(url):
         if the page content cannot be retrieved
     '''
 
-    pass
+    def response_OK():
+        content_type = response.headers['Content-Type']
+        return response.status_code == 200 and content_type and ('html' in content_type.lower())
 
+    try:
+        with closing(requests.get(url)) as response:
+            return response.text if response_OK() else None
+    except requests.RequestException as err:
+        stderr.write(f"ERROR when requesting Web page: {url}:\n{err}")
+        return None
 
 
 def get_mathematicians_names(url):
@@ -34,11 +46,41 @@ def get_mathematicians_names(url):
         and returns a list of the mathematicians' names
     '''
 
-    pass
+    def get_a_tag_content(parent_tag):
+        a_tag = parent_tag.find(name='a')
+        if a_tag.string:
+            return a_tag.string.strip()
+        elif a_tag.strings:
+            return " ".join(s for s in a_tag.stripped_strings)
+        return ""
+
+    names = []
+
+    page = get_content_from_url(url)
+    if page is None:
+        stderr.write("ERROR: not able to retrieve the page with mathematicians' names\n")
+        return names
+
+    page_content = BeautifulSoup(page, features='html.parser')
+    if page_content is None:
+        stderr.write("ERROR: not able to parse the page with mathematicians' names\n")
+        return names
+
+    ol_tags = page_content.find_all(name='ol')
+    for ol_tag in ol_tags:
+        li_tags = ol_tag.find_all(name='li')
+        for li_tag in li_tags:
+            if li_tag.children:
+                name = " ".join(li_child.string.strip() for li_child in li_tag.children if li_child.string)
+                if name == " ":
+                    name = get_a_tag_content(li_tag)
+                if name != "":
+                    names.append(name)
+
+    return names
 
 
-
-def clean_names(names):
+def clean_names(names):  ## UPDATE for class: 2nd condition for keeping a name_part: or len(name_part) > 2)
     """
         The function is intended for dealing with the diversity of name formats
         (e.g. Hermann G. Grassmann, Hermann K. H. Weyl, M. E. Camille Jordan),
@@ -46,9 +88,26 @@ def clean_names(names):
         data from Wikipedia. The names are 'cleaned' so that they consists of
         name and surname only. Name and surname are connected by an underscore.
     """
-    pass
+    cleaned_names = []
+    for name in names:
+        name_parts = [name_part for name_part in name.split() if (not name_part.endswith('.') or len(name_part) > 2)]
+        cleaned_name = "_".join([name_part.strip("`',") for name_part in name_parts])
+        cleaned_names.append(cleaned_name)
+
+    return cleaned_names
 
 
+def is_disambigution_page(webpage):
+    return webpage.find(name='table', id='disambigbox') is not None
+
+def proper_nationality_string(string):
+    return string.strip("[]() ,") and string.strip("[]() ,")[0].isupper()
+
+def clean_nationality_str(string):
+    if len(string.split()) > 1:
+        return " ".join([s.strip('()') for s in string.split() if s.strip('()') and s.strip('()')[0].isupper()])
+    else:
+        return string.strip(" ,")
 
 def retrieve_nationality(name):
     '''
@@ -59,8 +118,44 @@ def retrieve_nationality(name):
         from the place of birth (if available)
     '''
 
-    pass
+    wikipedia_url = f"https://en.wikipedia.org/wiki/{name}"
+    wikipedia_page = get_content_from_url(wikipedia_url)
+    if wikipedia_page is None:
+        stderr.write(f"ERROR: Could not retrieve Wikipedia page for {name}\n")
+        return None
 
+    wikipedia_page = BeautifulSoup(wikipedia_page, features='html.parser')
+    if wikipedia_page is None:
+        stderr.write(f"ERROR: Could not parse Wikipedia page for {name}\n")
+        return None
+
+    infobox = wikipedia_page.find(name='table', class_='infobox biography vcard')
+    if infobox is None:
+        if is_disambigution_page(wikipedia_page):
+            stderr.write(f"ERROR: reached the disambiguation page for name '{name}'\n")
+        else:
+            stderr.write(f"ERROR: No infobox data for the Wikipedia page of {name}\n")
+        return None
+
+    th_nationality = infobox.find_next(name='th', string='Nationality')
+    if th_nationality:
+        td_nationality = th_nationality.find_next_sibling(name='td')
+        if td_nationality.string:
+            return td_nationality.string.strip()
+        elif td_nationality.strings:
+            return ",".join([clean_nationality_str(s) for s in td_nationality.stripped_strings if proper_nationality_string(s)])
+
+    # if Nationality is not available...
+    th_born = infobox.find_next(name='th', string='Born')
+    if th_born:
+        birthplace_div = th_born.find_next(name='div', class_='birthplace')
+        if birthplace_div and birthplace_div.string:
+            return birthplace_div.string.strip()
+        elif birthplace_div and birthplace_div.strings:
+            origin = [clean_nationality_str(bp) for bp in birthplace_div.stripped_strings if proper_nationality_string(bp)][-1]
+            if len(origin.split(',')) > 1:
+                origin = (origin.split(',')[-1]).strip()
+            return origin
 
 
 
@@ -84,8 +179,10 @@ def collect_mathematicians_data():
     print(f'Gathered names for {len(mathematicians_names)} mathematicians.')
 
     names_cleaned = clean_names(mathematicians_names)
+    # for original, cleaned in dict(zip(mathematicians_names, names_cleaned)).items():
+    #     print(f"{original} -> {cleaned}")
 
-    print("Collecting data about the mathematicians' national origines...")
+    print("Collecting data about the mathematicians' national origins...")
     maths_dict = dict()
     not_found = list()
     for name in names_cleaned:
@@ -95,6 +192,9 @@ def collect_mathematicians_data():
         else:
             not_found.append(name)
     print('...done')
+
+    for mathematician, origin in maths_dict.items():
+        print(f"{mathematician}: {origin}")
 
     with open("mathematicians.json", "w") as jsonf:
         json.dump(maths_dict, jsonf, indent=4)
@@ -132,29 +232,39 @@ def most_represented_nations():
         take the first nationality as the 'original' one
     '''
 
-    with open("mathematicians.json", 'r') as fjson:
-        mathematicians = json.load(fjson)
+    # read the mathematicians data from the json file
+    with open("mathematicians.json") as fjson:
+        mathematicians_data = json.load(fjson)
 
     # keep the first nationality as the origin
-
+    for mathematician, origin in mathematicians_data.items():
+        if len(origin.split(',')) > 1:
+            mathematicians_data[mathematician] = origin.split(',')[0]
 
     # map the different ways of referring to the same origin
     # to a common name
-
+    nation_country_map = create_nation_country_mapping()
+    for mathematician, origin in mathematicians_data.items():
+        for nation, countries in nation_country_map.items():
+            if origin in countries:
+                mathematicians_data[mathematician] = nation
+                break
 
     # count the mathematicians for each identified national origin
-
+    nation_counts = defaultdict(int)
+    for origin in mathematicians_data.values():
+        nation_counts[origin] += 1
 
     # print the number of mathematicians per country of origin
+    # sort first by the number of mathematicians (desc), and then by the origin name (asc)
     print("\n\nNumber of world renowned mathematicians per country of origin:")
+    for origin, count in sorted(sorted(nation_counts.items()), key=lambda item: item[1], reverse=True):
+        print(f"\t-{origin}: {count}")
 
 
 
 
 if __name__ == '__main__':
 
-    pass
-    
-    # collect_mathematicians_data()
-    # most_represented_nations()
-
+    collect_mathematicians_data()
+    most_represented_nations()
