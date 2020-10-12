@@ -7,9 +7,9 @@ def print_odd_or_even():
     # Option 1:
     num = int(num_str)
     if num % 2 == 0:
-        print("Number ", num_str, " is EVEN")
+        print("Number", num_str, "is EVEN")
     else:
-        print("Number ", num_str, " is ODD")
+        print("Number", num_str, "is ODD")
 
     # Option 2:
     # result = 'even' if int(num) % 2 == 0 else 'odd'
@@ -103,22 +103,6 @@ def anagrams(s1, s2):
 def anagrams_v2(s1, s2):
     s1_reversed = list(reversed(s1.lower()))
     return s1_reversed == list(s2.lower())
-
-
-# Write a function that generates and prints a dictionary with entries
-# in the form x:x*x, where x is a number between 1 and n;
-# n is the input parameter
-
-
-
-
-
-
-# Write a function that receives a string as its input parameter and
-# calculates the number of digits and letters in this string.
-# The function returns a dictionary with the computed values.
-
-
 
 
 
